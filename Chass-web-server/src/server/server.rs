@@ -6,6 +6,9 @@ use std::net::TcpListener;
 use std::net::TcpStream;
 
 /*
+
+y
+
 8 | 56 57 58 59 60 61 62 63
 7 | 48 49 50 51 52 53 54 55
 6 | 40 41 42 43 44 45 46 47
@@ -15,7 +18,11 @@ use std::net::TcpStream;
 2 | 8  9  10 11 12 13 14 15
 1 | 0  1  2  3  4  5  6  7
   -------------------------
-     a  b  c  d  e  f  g  h
+     a  b  c  d  e  f  g  h   x
+
+     loc = 24 ( a1 )
+     FILE = 97 + ( loc % 8 )
+     RAKK = 
 */
 
 /// Arduino uno 와 통신하는 Server 구조체.

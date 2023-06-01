@@ -27,21 +27,38 @@ pub struct ChessTools {}
 // impl<T> DummyString for Tile<T>{}
 // impl<T> DummyU8 for Tile<T>{}
 
-pub struct Tile<T>
-where T : std::convert::From<u8> + std::convert::From<String>
-{
-    data: T,
+pub struct Tile{
+    loc_u8 : u8,
+    loc_string : String
 }
 
-impl<T> Tile<T> 
-where T : std::convert::From<u8> + std::convert::From<String> 
+trait CustomAny {
+    fn as_string(self) -> String;
+fn as_u8(self) -> u8;
+}
+
+impl CustomAny for String {
+#[inline]
+fn as_string(self) -> &String {&self}
+fn as_u8(self) -> u8 {panic!()}
+}
+
+impl CustomAny for u8 {
+#[inline]
+fn as_string(self) -> String {panic!()}
+fn as_u8(self) -> u8 {self}
+}
+
+impl Tile
 {
-    pub fn new(data: T) -> Tile<T> {
+    pub fn new<T>(data: T) -> Tile 
+        where T : std::convert::From<u8> + std::convert::From<String> + CustomAny
+        {
         const STRING: &str = "string";
         const STR: &str = "str";
         const U8: &str = "u8";
 
-        let byte_calc = |data: &str| {
+        let str_to_u8 = |data: &str| {
             if let Ok(num) = data[..1].parse::<u8>() {
                 data.bytes().nth(0).unwrap() * num
             } else {
@@ -49,14 +66,16 @@ where T : std::convert::From<u8> + std::convert::From<String>
             }
         };
 
-        match std::any::type_name::<T>() {
-            STRING => Tile {
-                data: "asd".to_string(),
-            },
-            // STR => Tile { data: () },
-            // U8 => Tile { data: () },
-            _ => panic!("Tile new error"),
+        let u8_to_string = |data : u8|{
+            let ans = vec![97 + (data % 8), data / 7 + 1];
+            str::from_utf8(&ans).unwrap().to_string()
+        };
+
+        Tile{
+            loc_u8 : str_to_u8(data.as_string().as_str()),
+            loc_string : u8_to_string(data.as_u8()),
         }
+
     }
 
     
